@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import StartScreen from './app/screens/StartScreen';
 import MapScreen from './app/screens/MapScreen'
 
-export default function App() {
+export default function App() { 
   return (
     <MapScreen/>
   );
