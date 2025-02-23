@@ -1,0 +1,3 @@
+# Finngo
+
+finngo apps
