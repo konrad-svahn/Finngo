@@ -12,7 +12,9 @@
   "dependencies": {
     "@maplibre/maplibre-react-native": "^10.1.0",
     "react": "19.0.0",
-    "react-native": "0.78.0"
+    "react-native": "0.78.0",
+    "react-native-maps": "^1.20.1",
+    "react-native-open-street-map": "^2.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
