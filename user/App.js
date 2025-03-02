@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet,} from 'react-native';
-//import MapScreen from './app/screens/MapScreen';
+import { StyleSheet, Text} from 'react-native';
 import MapScreen from './app/screens/MapScreen';
+
 
 const styles = StyleSheet.create({
   container: {
@@ -17,6 +17,3 @@ export default function App() {
     <MapScreen></MapScreen>
   );
 }
-
-
-

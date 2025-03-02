@@ -1,16 +1,17 @@
-import React from "react"
-import {ScrollView, StatusBar, StyleSheet, Text} from 'react-native';
-import { MapView, MarkerView} from "@maplibre/maplibre-react-native";
+import React, { Component } from 'react';
+import {ScrollView, StatusBar, StyleSheet, Text, useColorScheme, View} from 'react-native';
+import { WebView } from 'react-native-webview'
 
-function MapScreen(props){
-    return (
-      <MapView style={styles} >
-        <MarkerView coordinate={[7.20815, 2.29941]} anchor={{ x: 0.5, y: 0.5}}>
-          <Text>marker</Text>
-        </MarkerView>
-      </MapView>
-    );
-}
+class MapScreen extends Component {
+    render() {
+      return (
+        <WebView
+          source={{ uri: 'https://www.openstreetmap.org/' }}
+          style={styles}
+        />
+      );
+    }
+  }
 
 const styles = StyleSheet.create({
   background: {
