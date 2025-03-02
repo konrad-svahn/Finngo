@@ -1,19 +1,21 @@
 import React from "react"
-import {ImageBackground, StyleSheet, Text, View} from "react-native"
-import { MapView } from "@maplibre/maplibre-react-native";
+import {ScrollView, StatusBar, StyleSheet, Text} from 'react-native';
+import { MapView, MarkerView} from "@maplibre/maplibre-react-native";
 
-function StartScreen(props){
+function MapScreen(props){
     return (
-        <ImageBackground source={require("../assets/icon.png")} style={styles.background}>
-            <MapView/>
-        </ImageBackground>
+      <MapView style={styles} >
+        <MarkerView coordinate={[7.20815, 2.29941]} anchor={{ x: 0.5, y: 0.5}}>
+          <Text>marker</Text>
+        </MarkerView>
+      </MapView>
     );
 }
 
 const styles = StyleSheet.create({
-    background: {
-        flex: 1, 
-    },
+  background: {
+      flex: 1, 
+  },
 })
 
-export default StartScreen;
+export default MapScreen;
