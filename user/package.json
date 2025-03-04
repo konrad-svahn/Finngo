@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@maplibre/maplibre-react-native": "^10.1.0",
+    "@reduxjs/toolkit": "^2.6.0",
     "react": "^19.0.0",
     "react-native": "0.78.0",
-    "react-native-webview": "^13.13.2"
+    "react-native-webview": "^13.13.2",
+    "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
