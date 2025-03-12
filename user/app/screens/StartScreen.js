@@ -4,9 +4,7 @@ import {ImageBackground, StyleSheet, Text, View} from "react-native"
 function StartScreen(props){
     return (
         <ImageBackground source={require("../assets/icon.png")} style={styles.background}>
-           <View style={styles.toMapButon}>
-            <Text>Map</Text>
-           </View>
+          
         </ImageBackground>
     );
 }
