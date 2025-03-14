@@ -1,10 +1,12 @@
 import React from "react"
-import {ImageBackground, StyleSheet, Text, View} from "react-native"
+import {ImageBackground, StyleSheet, Text, View, TouchableOpacity} from "react-native"
 
 function StartScreen(props){
     return (
         <ImageBackground source={require("../assets/icon.png")} style={styles.background}>
-          
+            <TouchableOpacity onPress={() => props.navigation.navigate("Login")} style={styles.loginButon}>
+                <Text style={{color: "#ffffff", textAlign: "center", fontWeight: 700, fontSize: 16}}>Logout</Text>
+            </TouchableOpacity>
         </ImageBackground>
     );
 }
@@ -12,14 +14,14 @@ function StartScreen(props){
 const styles = StyleSheet.create({
     background: {
         flex: 1,
-        justifyContent: "flex-end",
+        justifyContent: "center",
         alignItems: "center",
     },
-    toMapButon: {
+    loginButon: {
         height: 70,
         width: "40%",
         backgroundColor: "#444444",
-        alignItems: "center",
+        justifyContent: "center",
     },
 })
 

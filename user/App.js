@@ -1,10 +1,10 @@
 import React from 'react';
 import { StyleSheet, Text} from 'react-native';
-import MapScreen from './app/screens/MapScreen';
 import NavBar from './app/components/navBar';
 import store from './app/redux/store'
 import { Provider } from 'react-redux'
 import { NavigationContainer } from '@react-navigation/native';
+import NavigationStack from './app/components/NavigationStack';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,7 +19,8 @@ export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <NavBar></NavBar>
+        <NavigationStack></NavigationStack>
+        
       </NavigationContainer>
     </Provider>
   );
