@@ -1,6 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text} from 'react-native';
-import NavBar from './app/components/navBar';
+import { StyleSheet } from 'react-native';
 import store from './app/redux/store'
 import { Provider } from 'react-redux'
 import { NavigationContainer } from '@react-navigation/native';
@@ -20,7 +19,6 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <NavigationStack></NavigationStack>
-        
       </NavigationContainer>
     </Provider>
   );

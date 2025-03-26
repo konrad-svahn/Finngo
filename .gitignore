@@ -29,6 +29,7 @@ yarn-error.*
 
 # local env files
 .env*.local
+*.env
 
 # typescript
 *.tsbuildinfo
@@ -108,3 +109,5 @@ local.properties
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+*tour.js*

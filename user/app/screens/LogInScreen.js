@@ -1,11 +1,16 @@
 import React from "react"
 import {TextInput, StyleSheet, Text, View, SafeAreaView, TouchableOpacity} from "react-native"
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useSelector, useDispatch} from 'react-redux'
+import { login } from "../redux/testSlice"
 
 function LogInScreen(props){
+    const auth = useSelector((state) => state.test.authKey)
+    const dispatch = useDispatch()
     return (
         <SafeAreaView style={styles.background}>
             <Text style={{fontSize: 30, paddingBottom: 8}}>Login</Text>
+            <Text>{auth}</Text>
             <View style={styles.aligner}>
                 <MaterialIcons name="alternate-email" size={20}></MaterialIcons>
                 <TextInput style={styles.textInput} placeholder="Email" keyboardType="email-address"></TextInput>
@@ -15,7 +20,14 @@ function LogInScreen(props){
                 <TextInput style={styles.textInput} placeholder="Password" secureTextEntry={true}></TextInput>
             </View>
             <View style={{width: '90%'}}>
-                <TouchableOpacity onPress={() => props.navigation.navigate("Navigation")} style={styles.loginButon}>
+                <TouchableOpacity style={styles.loginButon}
+                    onPress={() => {
+                        dispatch(login())
+                        if (auth != "null") {
+                            props.navigation.navigate("Navigation")
+                        }
+                    }} 
+                >
                     <Text style={{color: "#ffffff", textAlign: "center", fontWeight: 700, fontSize: 16}}>Login</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {}}>

@@ -1,0 +1,31 @@
+# For use with the Rest Client VSCode extension (humao.rest-client)
+
+@baseURL=http://127.0.0.1:5001
+
+@AUTH = auth
+###
+GET {{baseURL}}
+Authorization: Bearer {{AUTH}}
+
+###
+GET {{baseURL}}/signin
+###
+
+POST {{baseURL}}/users/signin
+Content-Type: application/json
+
+{ 
+    "email": "haj@haj.haj", 
+    "password": "password"
+}
+###
+
+POST {{baseURL}}/users/signup
+Content-Type: application/json
+
+{ 
+    "email": "haj@haj.haj", 
+    "password": "password", 
+    "firstName":"clean cottage", 
+    "lastName": "pog"
+}

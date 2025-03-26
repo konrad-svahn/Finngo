@@ -1,29 +1,33 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createSlice } from '@reduxjs/toolkit'
 
-export const counterSlice = createSlice({
-  name: 'counter',
+// https://react-redux.js.org/tutorials/quick-start
+export const testSlice = createSlice({
+  name: 'test',
   initialState: {
-    value: 0,
+    authKey: "authkey",
+    is_loading: true,
   },
   reducers: {
-    increment: (state) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes.
-      // Also, no return statement is required from these functions.
-      state.value += 1
+    setStateTo: (state, action) => {
+      state.authKey = action.payload
     },
-    decrement: (state) => {
-      state.value -= 1
-    },
-    incrementByAmount: (state, action) => {
-      state.value += action.payload
+    login: (state) => {
+      state.is_loading = true
+      state.authKey = ";)"
+      AsyncStorage.setItem("authKey", state.authKey)
+      state.is_loading = false
+    },    
+    logout: (state) => {
+      state.is_loading = true
+      state.authKey = "null"
+      AsyncStorage.removeItem("authKey")
+      state.is_loading = false
     },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = counterSlice.actions
+export const { login, logout,  setStateTo} = testSlice.actions
 
-export default counterSlice.reducer
+export default testSlice.reducer

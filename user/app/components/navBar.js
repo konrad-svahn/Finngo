@@ -27,7 +27,8 @@ function NavBar() {
         tabBarStyle: styles.tabBarStyle,
         tabBarItemStyle: styles.tabBarItemStyle,
         tabBarActiveTintColor: "#000000",
-        tabBarInactiveTintColor: "000000"
+        tabBarInactiveTintColor: "000000",
+        
     })}>
       <Tab.Screen name="Home" component={StartScreen} />
       <Tab.Screen name="Map" component={MapScreen} />
