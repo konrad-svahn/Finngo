@@ -1,64 +1,48 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <title>Geolocation</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
 
-<head>
-	<title>Geolocation</title>
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
-	<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        </style>
 
-	<style>
-		body {
-			margin: 0;
-			padding: 0;
-		}
-	</style>
+    </head>
 
-</head>
+    <body>
+        <div id="map" style="width:100%; height: 100vh"></div>
+        <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+        <script>
+            map = L.map('map').setView([60.192059110746, 24.945831110746], 11);
+            mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'Leaflet &copy; ' + mapLink + ', contribution', maxZoom: 18 }).addTo(map);
+            routes = L.geoJSON().addTo(map);
 
-<body>
-	<div id="map" style="width:100%; height: 100vh"></div>
-	<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
-	<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+            startLat = 60.192059110746
+            startLon =  24.945831110746
 
+            var marker = L.marker([startLat, startLon]).addTo(map);
 
-	<script>
-
-		var map = L.map('map').setView([60.192059110746, 24.945831110746], 11);
-		mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
-		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'Leaflet &copy; ' + mapLink + ', contribution', maxZoom: 18 }).addTo(map);
-
-		var taxiIcon = L.icon({
-			iconUrl: 'img/taxi.png',
-			iconSize: [70, 70]
-		})
-
-		var marker = L.marker([60.192059110746, 24.945831110746], { icon: taxiIcon }).addTo(map);
-
-		map.on('click', function (e) {
-			console.log(e)
-			var newMarker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
-			L.Routing.control({
-				waypoints: [
-					L.latLng(60.192059110746, 24.945831110746),
-					L.latLng(e.latlng.lat, e.latlng.lng)
-				]
-			}).on('routesfound', function (e) {
-				var routes = e.routes;
-				console.log(routes);
-
-				e.routes[0].coordinates.forEach(function (coord, index) {
-					setTimeout(function () {
-						marker.setLatLng([coord.lat, coord.lng]);
-					}, 100 * index)
-				})
-
-			}).addTo(map);
-		});
-
-
-	</script>
-
-
-</body>
-
+            map.on('click', async function (e) {
+                console.log(e)
+                newMarker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
+                try {
+                        var result = await fetch(
+                            "https://router.project-osrm.org/route/v1/driving/"+startLon+","+startLat+";"+e.latlng.lng+","+e.latlng.lat+"?geometries=geojson&alternatives=true&steps=true&generate_hints=false",
+                            { method: "GET" }
+                        ).then(
+                            (data)=>data.json()
+                        )
+                        console.log(result)
+                        routes.addData(result.routes[0].geometry)
+                    } catch (error) {
+                        console.log(error)
+                    }
+            });
+        </script>
+    </body>
 </html>
