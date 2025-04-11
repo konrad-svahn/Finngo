@@ -1,22 +1,26 @@
 import React from "react"
-import {ImageBackground, StyleSheet, Text, View, TouchableOpacity} from "react-native"
+import {ImageBackground, StyleSheet, Text, PermissionsAndroid, TouchableOpacity} from "react-native"
 import { useSelector, useDispatch } from 'react-redux'
 import { logout } from "../redux/testSlice"
-
+import LocationPrompt from "../components/LocationPrompt"
 
 function StartScreen(props){
-
-    const count = useSelector((state) => state.test.authKey)
+    const authKey = useSelector((state) => state.test.authKey)
+    const location = useSelector((state) => state.test.location)
+    const error = useSelector((state) => state.test.error)
     const dispatch = useDispatch()
+
     return (
         <ImageBackground source={require("../assets/icon.png")} style={styles.background}>
+            <LocationPrompt></LocationPrompt>
             <TouchableOpacity style={styles.loginButon}
                 onPress={() => {
                     dispatch(logout())
                     props.navigation.navigate("Login")
                 }} 
             >
-                <Text style={{color: "#ffffff", textAlign: "center", fontWeight: 700, fontSize: 16}}>{count}</Text>
+                <Text style={{color: "#ffffff", textAlign: "center", fontWeight: 700, fontSize: 16}}>{authKey}</Text>
+                <Text>{error}</Text>
             </TouchableOpacity>
         </ImageBackground>
     );

@@ -28,6 +28,7 @@ function NavBar() {
         tabBarItemStyle: styles.tabBarItemStyle,
         tabBarActiveTintColor: "#000000",
         tabBarInactiveTintColor: "000000",
+        headerShown: false
         
     })}>
       <Tab.Screen name="Home" component={StartScreen} />
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
     shadowColor: "#000000",
     shadowOffset: {width: 0, height: 5},
     shadowOpacity: 0.5,
-    shadowRadius: 5
+    shadowRadius: 5,
   },
   tabBarItemStyle: {
     paddingVertical: 0,
