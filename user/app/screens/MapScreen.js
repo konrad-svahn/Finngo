@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview' 
+import { connect } from 'react-redux';
 
 // this is the same data thats in the Map.html file but for some reason react-native-webview cant load it from that file so its here as a variable istead
 html = `
@@ -25,8 +26,15 @@ html = `
         <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
         <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
         <script>
-            userLat = 60.17104039007619
-            userLon =  24.94132518768311
+            try {
+                if (userLat == undefined || userLon == undefined) {
+                    userLat = 60.17104039007619
+                    userLon =  24.94132518768311
+            }
+            } catch {
+                userLat = 60.17104039007619
+                userLon =  24.94132518768311
+            }
             exportRoute = [[userLat, userLon]]
 
             map = L.map('map').setView([userLat, userLon], 11);
@@ -38,8 +46,8 @@ html = `
             userLocation._icon.classList.add("huechange")
             
             userLocation.on('dragend', function(event){
-                var marker = event.target;
-                var position = marker.getLatLng();
+                marker = event.target;
+                position = marker.getLatLng();
                 marker.setLatLng(new L.LatLng(position.lat, position.lng),{draggable:'true'});
                 userLat = position.lat
                 userLon =  position.lng
@@ -79,21 +87,39 @@ html = `
 </html>
 `
 
+function validateLocation (location) {
+    try {
+        if (location == null || location == undefined || location.latitude == undefined || location.longitude == undefined) {
+            return `userLat = 60.17104039007619; userLon = 24.94132518768311;`
+        } else {
+            return `userLat = `+location.latitude+`; userLon = `+location.longitude+`;`
+        }
+    } catch (error) {
+        console.log(error)
+        return `userLat = 60.17104039007619; userLon = 24.94132518768311;`
+    }
+}
+
 class MapScreen extends Component {
     render() {
-      return (
-        <>
-          <WebView
-            originWhitelist={["*"]}
-            source={{ html }}
-            style={styles}
-            onMessage={event => {
-              console.log("e")
-              console.log(JSON.parse(event.nativeEvent.data))
-            }}
-          />
-        </>
-      );
+        const { location } = this.props;
+        console.log(location)
+
+        setTimeout(() => {this.webref.injectJavaScript(validateLocation(location));},1)
+        return (
+            <>
+            <WebView
+                ref={(r) => (this.webref = r)}
+                originWhitelist={["*"]}
+                source={{ html }}
+                style={styles}
+                onMessage={event => {
+                console.log("e")
+                console.log(JSON.parse(event.nativeEvent.data))
+                }}
+            />
+            </>
+        );
     }
   }
 
@@ -103,4 +129,6 @@ const styles = StyleSheet.create({
   },
 })
 
-export default MapScreen;
+const mapStateToProps = (state) => ({ location: state.location })
+
+export default connect (mapStateToProps) (MapScreen);
