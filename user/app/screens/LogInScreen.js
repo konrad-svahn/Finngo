@@ -20,14 +20,7 @@ function LogInScreen(props){
                 <TextInput style={styles.textInput} placeholder="Password" secureTextEntry={true}></TextInput>
             </View>
             <View style={{width: '90%'}}>
-                <TouchableOpacity style={styles.loginButon}
-                    onPress={() => {
-                        dispatch(login())
-                        if (auth != "null") {
-                            props.navigation.navigate("Navigation")
-                        }
-                    }} 
-                >
+                <TouchableOpacity style={styles.loginButon} onPress={() => {dispatch(login({ props }))}}>
                     <Text style={{color: "#ffffff", textAlign: "center", fontWeight: 700, fontSize: 16}}>Login</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {}}>

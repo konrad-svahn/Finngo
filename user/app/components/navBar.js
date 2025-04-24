@@ -39,10 +39,10 @@ function NavBar() {
 
 const styles = StyleSheet.create({
   tabBarStyle: {
-    height: 80,
+    height: 90,
     backgroundColor: "#ffffff",
     position: "absolute",
-    bottom: 15,
+    top: 40,
     left: 30,
     right: 30,
     borderRadius: 30,

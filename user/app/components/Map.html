@@ -67,7 +67,6 @@
             userLocation = L.marker([userLat, userLon], {draggable:"true"}).addTo(map);
             userLocation._icon.classList.add("huechange")
 
-
             requestARide = L.control.export({ position: "bottomright" }).addTo(map)
 
             userLocation.on("dragend", function(event){

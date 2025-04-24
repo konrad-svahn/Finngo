@@ -6,7 +6,6 @@ import LocationPrompt from "../components/LocationPrompt"
 
 function StartScreen(props){
     const authKey = useSelector((state) => state.test.authKey)
-    const location = useSelector((state) => state.test.location)
     const error = useSelector((state) => state.test.error)
     const dispatch = useDispatch()
 
