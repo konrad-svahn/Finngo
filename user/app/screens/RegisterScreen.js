@@ -1,21 +1,36 @@
 import React from "react"
 import {TextInput, StyleSheet, Text, View, SafeAreaView, TouchableOpacity} from "react-native"
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useSelector, useDispatch} from 'react-redux'
+import { register, setEmail, setPassword, setFirsName, setLastName} from "../redux/testSlice"
 
 function RegisterScreen(props){
+    const email = useSelector((state) => state.test.email)
+    const password = useSelector((state) => state.test.password)
+    const firstName = useSelector((state) => state.test.firstName)
+    const lastName = useSelector((state) => state.test.lastName)
+    const dispatch = useDispatch()
     return (
         <SafeAreaView style={styles.background}>
             <Text style={{fontSize: 30, paddingBottom: 8}}>Register</Text>
             <View style={styles.aligner}>
                 <MaterialIcons name="alternate-email" size={20}></MaterialIcons>
-                <TextInput style={styles.textInput} placeholder="Email" keyboardType="email-address"></TextInput>
+                <TextInput style={styles.textInput} placeholder="Email" keyboardType="email-address" onChangeText={(input) => dispatch(setEmail(input))}></TextInput>
             </View>
             <View style={styles.aligner}>
                 <MaterialIcons name="alternate-email" size={20}></MaterialIcons>
-                <TextInput style={styles.textInput} placeholder="Password" secureTextEntry={true}></TextInput>
+                <TextInput style={styles.textInput} placeholder="Password" secureTextEntry={true} onChangeText={(input) => dispatch(setPassword(input))}></TextInput>
+            </View>
+            <View style={styles.aligner}>
+                <MaterialIcons name="alternate-email" size={20}></MaterialIcons>
+                <TextInput style={styles.textInput} placeholder="first name" keyboardType="email-address" onChangeText={(input) => dispatch(setFirsName(input))}></TextInput>
+            </View>
+            <View style={styles.aligner}>
+                <MaterialIcons name="alternate-email" size={20}></MaterialIcons>
+                <TextInput style={styles.textInput} placeholder="last name" secureTextEntry={true} onChangeText={(input) => dispatch(setLastName(input))}></TextInput>
             </View>
             <View style={{width: '90%'}}>
-                <TouchableOpacity onPress={() => props.navigation.navigate("Navigation")} style={styles.loginButon}>
+                <TouchableOpacity onPress={() => dispatch(register({ email, password, firstName, lastName, props}))} style={styles.loginButon}>
                     <Text style={{color: "#ffffff", textAlign: "center", fontWeight: 700, fontSize: 16}}>Register</Text>
                 </TouchableOpacity>
                 <View style={{flexDirection: "row", justifyContent: "center", paddingBottom: 20}}>

@@ -27,6 +27,15 @@ html = `
         <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
         <script>
             try {
+                if (basecost == undefined || costPerMetre == undefined) {
+                    basecost = 10
+                    costPerMetre = 0.002
+                }
+            } catch (error) {
+                basecost = 10
+                costPerMetre = 0.002
+            }
+            try {
                 if (userLat == undefined || userLon == undefined) {
                     userLat = 60.17104039007619
                     userLon =  24.94132518768311
@@ -37,31 +46,62 @@ html = `
             }
             exportRoute = [[userLat, userLon]]
 
-            map = L.map('map').setView([userLat, userLon], 11);
+            L.Control.export = L.Control.extend({
+                onAdd: function(map) {
+                    exportButton = L.DomUtil.create("div","wrapper")
+                    exportButton.innerHTML = "<button>Order Ride</button>"
+                    L.DomEvent.disableClickPropagation(exportButton)
+                    L.DomEvent.on(exportButton, "click", async function(){
+                        if (exportRoute.length > 1) {
+                            routeUrl = "https://router.project-osrm.org/route/v1/driving/"
+                            exportRoute.forEach(point => {
+                                routeUrl = routeUrl + point[1] + "," + point[0] + ";"
+                            });
+                            routeUrl = routeUrl.slice(0, -1) + "?geometries=geojson&alternatives=true&steps=true&generate_hints=false"
+                            finalRoute = await fetch(routeUrl, { method: "GET" }).then((data)=>data.json())
+                            cost = basecost + finalRoute.routes[0].distance * costPerMetre
+                            cost = Math.round(cost * 100) / 100
+                            if (confirm("do you want to confirm the selected route \\nthe distance is: "+finalRoute.routes[0].distance+"m \\nit will cost: "+ cost+"€")) {
+                                console.log(finalRoute)
+                            }//*/
+                        } else {
+                            alert("a route must contain more than one point")
+                        }
+                    });
+                    return exportButton;
+                },
+                onRemove: function(map) {}
+            });
+            L.control.export = function(opts) {
+                return new L.Control.export(opts);
+            }
+
+            map = L.map("map").setView([userLat, userLon], 11);
             mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
-            tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'Leaflet &copy; ' + mapLink + ', contribution', maxZoom: 18 }).addTo(map);
-            search = L.Control.geocoder({position: 'bottomleft'}).addTo(map);
+            tiles = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", { attribution: "Leaflet &copy; " + mapLink + ", contribution", maxZoom: 18 }).addTo(map);
+            search = L.Control.geocoder({position: "bottomleft"}).addTo(map);
             routes = L.geoJSON().addTo(map);
-            userLocation = L.marker([userLat, userLon], {draggable:'true'}).addTo(map);
+            userLocation = L.marker([userLat, userLon], {draggable:"true"}).addTo(map);
             userLocation._icon.classList.add("huechange")
-            
-            userLocation.on('dragend', function(event){
+
+            requestARide = L.control.export({ position: "bottomright" }).addTo(map)
+
+            userLocation.on("dragend", function(event){
                 marker = event.target;
                 position = marker.getLatLng();
-                marker.setLatLng(new L.LatLng(position.lat, position.lng),{draggable:'true'});
+                marker.setLatLng(new L.LatLng(position.lat, position.lng),{draggable:"true"});
                 userLat = position.lat
                 userLon =  position.lng
                 exportRoute[0] = [position.lat, position.lng]
                 map.panTo(new L.LatLng(position.lat, position.lng))
             });//*/
 
-            map.on('click', function (event) {
+            map.on("click", function (event) {
                 L.marker([event.latlng.lat, event.latlng.lng]).addTo(map);
-                console.log(exportRoute)
             });
 
-            map.on('layeradd', async function(event) {
-                if (event.layer.options.alt == 'Marker') {
+            map.on("layeradd", async function(event) {
+                if (event.layer.options.alt == "Marker") {
                     try {
                         startLat = exportRoute[exportRoute.length-1][0]
                         startLon = exportRoute[exportRoute.length-1][1]

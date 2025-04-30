@@ -2,10 +2,13 @@ import React from "react"
 import {TextInput, StyleSheet, Text, View, SafeAreaView, TouchableOpacity} from "react-native"
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useSelector, useDispatch} from 'react-redux'
-import { login } from "../redux/testSlice"
+import { login, setEmail, setPassword } from "../redux/testSlice"
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 function LogInScreen(props){
     const auth = useSelector((state) => state.test.authKey)
+    const email = useSelector((state) => state.test.email)
+    const password = useSelector((state) => state.test.password)
     const dispatch = useDispatch()
     return (
         <SafeAreaView style={styles.background}>
@@ -13,17 +16,17 @@ function LogInScreen(props){
             <Text>{auth}</Text>
             <View style={styles.aligner}>
                 <MaterialIcons name="alternate-email" size={20}></MaterialIcons>
-                <TextInput style={styles.textInput} placeholder="Email" keyboardType="email-address"></TextInput>
+                <TextInput style={styles.textInput} placeholder="Email" keyboardType="email-address"  onChangeText={(input) => dispatch(setEmail(input))}></TextInput>
             </View>
             <View style={styles.aligner}>
                 <MaterialIcons name="alternate-email" size={20}></MaterialIcons>
-                <TextInput style={styles.textInput} placeholder="Password" secureTextEntry={true}></TextInput>
+                <TextInput style={styles.textInput} placeholder="Password" secureTextEntry={true} onChangeText={(input) => dispatch(setPassword(input))}></TextInput>
             </View>
             <View style={{width: '90%'}}>
-                <TouchableOpacity style={styles.loginButon} onPress={() => {dispatch(login({ props }))}}>
+                <TouchableOpacity style={styles.loginButon} onPress={() => {dispatch(login({ email, password, props}))}}>
                     <Text style={{color: "#ffffff", textAlign: "center", fontWeight: 700, fontSize: 16}}>Login</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => {}}>
+                <TouchableOpacity onPress={() => {console.log(email+" "+password)}}>
                     <Text style={{color: "#ad40af", paddingBottom: 20, textAlign: "center"}}>forgot your password?</Text>
                 </TouchableOpacity>
                 <View style={{flexDirection: "row", justifyContent: "center", paddingBottom: 20}}>

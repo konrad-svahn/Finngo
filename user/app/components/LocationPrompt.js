@@ -23,10 +23,10 @@ function LocationPrompt() {
             },
             );
             if (granted === 'granted') {
-            console.log('You can use Geolocation');
+            //console.log('You can use Geolocation');
             return true;
             } else {
-            console.log('You cannot use Geolocation');
+            //console.log('You cannot use Geolocation');
             return false;
             }
         } catch (err) {
@@ -38,7 +38,6 @@ function LocationPrompt() {
     const getLocation = () => {
         const result = requestLocationPermission();
         result.then(res => {
-            console.log('res is:', res);
             if (res) {
             Geolocation.getCurrentPosition(
                 position => {
