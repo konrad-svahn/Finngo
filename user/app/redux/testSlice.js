@@ -74,7 +74,7 @@ export const testSlice = createSlice({
         state.is_loading = false;
         console.log(action.payload)
         AsyncStorage.setItem("authKey", action.payload.token)
-        AsyncStorage.setItem("user",action.payload._id)
+        AsyncStorage.setItem("user",action.payload.result._id)
       })
       .addCase(login.rejected, (state, action) => {
         console.log(action.payload)
@@ -87,7 +87,7 @@ export const testSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.is_loading = false;
         AsyncStorage.setItem("authKey", action.payload.token)
-        AsyncStorage.setItem("user",action.payload._id)
+        AsyncStorage.setItem("user",action.payload.result._id)
       })
       .addCase(register.rejected, (state, action) => {
         state.is_loading = false;

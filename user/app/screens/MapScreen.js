@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview' 
 import { connect } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import * as api from "../redux/api";
 
 // this is the same data thats in the Map.html file but for some reason react-native-webview cant load it from that file so its here as a variable istead
 html = `
@@ -153,8 +155,15 @@ class MapScreen extends Component {
                 originWhitelist={["*"]}
                 source={{ html }}
                 style={styles}
-                onMessage={event => {
-                console.log(JSON.parse(event.nativeEvent.data))
+                onMessage={ async function (event) {
+                    json = JSON.parse(event.nativeEvent.data)
+                    console.log(json)
+                    route = event.nativeEvent.data
+                    creator = await AsyncStorage.getItem("user")
+                    startlat = json.waypoints[0].location[1]
+                    startlon = json.waypoints[0].location[0]
+                    console.log(creator+"  "+startlat+"  "+startlon)
+                    await api.createTour({route, creator, startlat, startlon}).then(data => console.log(data))
                 }}
             />
             </>
