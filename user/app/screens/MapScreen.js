@@ -63,6 +63,7 @@ html = `
                             cost = Math.round(cost * 100) / 100
                             if (confirm("do you want to confirm the selected route \\nthe distance is: "+finalRoute.routes[0].distance+"m \\nit will cost: "+ cost+"€")) {
                                 console.log(finalRoute)
+                                window.ReactNativeWebView.postMessage(JSON.stringify(finalRoute))
                             }//*/
                         } else {
                             alert("a route must contain more than one point")
@@ -116,7 +117,6 @@ html = `
                         console.log(result)
                         routes.addData(result.routes[0].geometry)
                         exportRoute.push([targetLat, targetLon])
-                        window.ReactNativeWebView.postMessage(JSON.stringify(result))
                     } catch (error) {
                         console.log(error)
                     }
@@ -154,7 +154,6 @@ class MapScreen extends Component {
                 source={{ html }}
                 style={styles}
                 onMessage={event => {
-                console.log("e")
                 console.log(JSON.parse(event.nativeEvent.data))
                 }}
             />
