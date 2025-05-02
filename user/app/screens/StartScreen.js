@@ -6,9 +6,7 @@ import LocationPrompt from "../components/LocationPrompt"
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 function StartScreen(props){
-    const error = useSelector((state) => state.test.error)
     const dispatch = useDispatch()
-
     return (
         <ImageBackground source={require("../assets/icon.png")} style={styles.background}>
             <LocationPrompt></LocationPrompt>
@@ -19,7 +17,6 @@ function StartScreen(props){
                 }} 
             >
                 <Text style={{color: "#ffffff", textAlign: "center", fontWeight: 700, fontSize: 16}}>logout</Text>
-                <Text>{error}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.loginButon} onPress={() => { AsyncStorage.getItem("authKey").then(data => console.log(data))}} />
         </ImageBackground>

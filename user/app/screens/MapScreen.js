@@ -131,10 +131,10 @@ html = `
 
 function validateLocation (location) {
     try {
-        if (location == null || location == undefined || location.latitude == undefined || location.longitude == undefined) {
+        if (location == null || location == undefined || location.coords.latitude == undefined || location.coords.longitude == undefined) {
             return `userLat = 60.17104039007619; userLon = 24.94132518768311;`
         } else {
-            return `userLat = `+location.latitude+`; userLon = `+location.longitude+`;`
+            return `userLat = `+location.coords.latitude+`; userLon = `+location.coords.longitude+`;`
         }
     } catch (error) {
         console.log(error)
@@ -145,8 +145,6 @@ function validateLocation (location) {
 class MapScreen extends Component {
     render() {
         const { location } = this.props;
-        console.log(location)
-
         setTimeout(() => {this.webref.injectJavaScript(validateLocation(location));},1)
         return (
             <>
@@ -162,7 +160,6 @@ class MapScreen extends Component {
                     creator = await AsyncStorage.getItem("user")
                     startlat = json.waypoints[0].location[1]
                     startlon = json.waypoints[0].location[0]
-                    console.log(creator+"  "+startlat+"  "+startlon)
                     await api.createTour({route, creator, startlat, startlon}).then(data => console.log(data))
                 }}
             />
@@ -177,6 +174,6 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = (state) => ({ location: state.location })
+const mapStateToProps = (state) => ({ location: state.test.location })
 
 export default connect (mapStateToProps) (MapScreen);

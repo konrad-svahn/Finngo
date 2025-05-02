@@ -41,7 +41,7 @@ export const testSlice = createSlice({
     location: null
   },
   reducers: {
-    setLocation: (state, action) => {
+    setLocation: (state, action) => { 
       state.location = action.payload
     },  
     setEmail: (state, action) => {
