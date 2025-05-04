@@ -23,48 +23,15 @@
                 if (userLat == undefined || userLon == undefined || importRoutes == undefined) {
                     userLat = 60.17104039007619
                     userLon =  24.94132518768311
-                    importRoutes = "[1]"
+                    importRoutes = "[]"
             }
-            } catch {
+            } catch (error) {
                 userLat = 60.17104039007619
                 userLon =  24.94132518768311
-                importRoutes = "[1]"
+                importRoutes = "[]"
             }
-            importRoutes = JSON.parse(importRoutes)
-
-
-            exportRoute = [[userLat, userLon]]
-
-            L.Control.export = L.Control.extend({
-                onAdd: function(map) {
-                    exportButton = L.DomUtil.create("div","wrapper")
-                    exportButton.innerHTML = "<button>Order Ride</button>"
-                    L.DomEvent.disableClickPropagation(exportButton)
-                    L.DomEvent.on(exportButton, "click", async function(){
-                        if (exportRoute.length > 1) {
-                            routeUrl = "https://router.project-osrm.org/route/v1/driving/"
-                            exportRoute.forEach(point => {
-                                routeUrl = routeUrl + point[1] + "," + point[0] + ";"
-                            });
-                            routeUrl = routeUrl.slice(0, -1) + "?geometries=geojson&alternatives=true&steps=true&generate_hints=false"
-                            finalRoute = await fetch(routeUrl, { method: "GET" }).then((data)=>data.json())
-                            cost = basecost + finalRoute.routes[0].distance * costPerMetre
-                            cost = Math.round(cost * 100) / 100
-                            if (confirm("do you want to confirm the selected route \nthe distance is: "+finalRoute.routes[0].distance+"m \nit will cost: "+ cost+"€")) {
-                                console.log(finalRoute)
-                                window.ReactNativeWebView.postMessage(JSON.stringify(finalRoute))
-                            }//*/
-                        } else {
-                            alert(importRoutes[0])
-                        }
-                    });
-                    return exportButton;
-                },
-                onRemove: function(map) {}
-            });
-            L.control.export = function(opts) {
-                return new L.Control.export(opts);
-            }
+            userLat = 60.17104039007619
+            userLon =  24.94132518768311
 
             map = L.map("map").setView([userLat, userLon], 11);
             mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
@@ -73,6 +40,30 @@
             routes = L.geoJSON().addTo(map);
             userLocation = L.marker([userLat, userLon], {draggable:"true"}).addTo(map);
             userLocation._icon.classList.add("huechange")
+
+            L.Control.export = L.Control.extend({
+                onAdd: function(map) {
+                    exportButton = L.DomUtil.create("div","wrapper")
+                    exportButton.innerHTML = "<button>deaw nerby routes</button>"
+                    L.DomEvent.disableClickPropagation(exportButton)
+                    L.DomEvent.on(exportButton, "click", async function(){
+                        importRoutes.forEach(route => {
+                            try {
+                                r = JSON.parse(route.route)
+                                window.ReactNativeWebView.postMessage(JSON.stringify(r.routes[0]))
+                                routes.addData(r.routes[0].geometry)
+                            } catch (error) {
+                                alert(error)
+                            }
+                        });
+                    });
+                    return exportButton;
+                },
+                onRemove: function(map) {}
+            });
+            L.control.export = function(opts) {
+                return new L.Control.export(opts);
+            }
 
             seeNerbyRequests = L.control.export({ position: "bottomright" }).addTo(map)
 

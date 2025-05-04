@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview' 
 import { connect } from 'react-redux';
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import * as api from "../redux/api";
 
 // this is the same data thats in the Map.html file but for some reason react-native-webview cant load it from that file so its here as a variable istead
 html = `
@@ -39,40 +37,8 @@ html = `
                 userLon =  24.94132518768311
                 importRoutes = "[]"
             }
-            //importRoutes = JSON.parse(importRoutes)
-
-            exportRoute = [[userLat, userLon]]
-
-            L.Control.export = L.Control.extend({
-                onAdd: function(map) {
-                    exportButton = L.DomUtil.create("div","wrapper")
-                    exportButton.innerHTML = "<button>Order Ride</button>"
-                    L.DomEvent.disableClickPropagation(exportButton)
-                    L.DomEvent.on(exportButton, "click", async function(){
-                        if (exportRoute.length > 1) {
-                            routeUrl = "https://router.project-osrm.org/route/v1/driving/"
-                            exportRoute.forEach(point => {
-                                routeUrl = routeUrl + point[1] + "," + point[0] + ";"
-                            });
-                            routeUrl = routeUrl.slice(0, -1) + "?geometries=geojson&alternatives=true&steps=true&generate_hints=false"
-                            finalRoute = await fetch(routeUrl, { method: "GET" }).then((data)=>data.json())
-                            cost = basecost + finalRoute.routes[0].distance * costPerMetre
-                            cost = Math.round(cost * 100) / 100
-                            if (confirm("do you want to confirm the selected route \\nthe distance is: "+finalRoute.routes[0].distance+"m \\nit will cost: "+ cost+"€")) {
-                                console.log(finalRoute)
-                                window.ReactNativeWebView.postMessage(JSON.stringify(finalRoute))
-                            }//*/
-                        } else {
-                            alert(importRoutes[0])
-                        }
-                    });
-                    return exportButton;
-                },
-                onRemove: function(map) {}
-            });
-            L.control.export = function(opts) {
-                return new L.Control.export(opts);
-            }
+            userLat = 60.17104039007619
+            userLon =  24.94132518768311
 
             map = L.map("map").setView([userLat, userLon], 11);
             mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
@@ -81,6 +47,30 @@ html = `
             routes = L.geoJSON().addTo(map);
             userLocation = L.marker([userLat, userLon], {draggable:"true"}).addTo(map);
             userLocation._icon.classList.add("huechange")
+
+            L.Control.export = L.Control.extend({
+                onAdd: function(map) {
+                    exportButton = L.DomUtil.create("div","wrapper")
+                    exportButton.innerHTML = "<button>deaw nerby routes</button>"
+                    L.DomEvent.disableClickPropagation(exportButton)
+                    L.DomEvent.on(exportButton, "click", async function(){
+                        importRoutes.forEach(route => {
+                            try {
+                                r = JSON.parse(route.route)
+                                window.ReactNativeWebView.postMessage(JSON.stringify(r.routes[0]))
+                                routes.addData(r.routes[0].geometry)
+                            } catch (error) {
+                                alert(error)
+                            }
+                        });
+                    });
+                    return exportButton;
+                },
+                onRemove: function(map) {}
+            });
+            L.control.export = function(opts) {
+                return new L.Control.export(opts);
+            }
 
             seeNerbyRequests = L.control.export({ position: "bottomright" }).addTo(map)
 
@@ -107,10 +97,7 @@ async function validateLocation (location, nerbyRoutes) {
         if (nerbyRoutes == null || nerbyRoutes.length < 1 ) {
             return `userLat = 60.17104039007619; userLon = 24.94132518768311; importRoutes = [];`
         }
-        a = JSON.stringify(nerbyRoutes)
-        console.log(a)
-        console.log(JSON.parse(a))
-        return `userLat = `+location.coords.latitude+`; userLon = `+location.coords.longitude+`; importRoutes =`+ JSON.stringify(nerbyRoutes)+`; alert(userLat+' '+userLon+' '+importRoutes);`
+        return `userLat = `+location.coords.latitude+`; userLon = `+location.coords.longitude+`; importRoutes = `+ JSON.stringify(nerbyRoutes)+`;`
     } catch (error) {
         console.log(error)
         return false
