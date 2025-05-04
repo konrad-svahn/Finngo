@@ -32,15 +32,14 @@ html = `
                 if (userLat == undefined || userLon == undefined || importRoutes == undefined) {
                     userLat = 60.17104039007619
                     userLon =  24.94132518768311
-                    importRoutes = "[1]"
+                    importRoutes = "[]"
             }
             } catch (error) {
                 userLat = 60.17104039007619
                 userLon =  24.94132518768311
-                importRoutes = "[2]"
-                alert(error)
+                importRoutes = "[]"
             }
-            importRoutes = JSON.parse(importRoutes)
+            //importRoutes = JSON.parse(importRoutes)
 
             exportRoute = [[userLat, userLon]]
 
@@ -103,12 +102,15 @@ async function validateLocation (location, nerbyRoutes) {
     try {
         if (location == null || location == undefined || location.coords.latitude == undefined || location.coords.longitude == undefined) {
             console.log("no location")
-            return false
+            return `userLat = 60.17104039007619; userLon = 24.94132518768311; importRoutes = [];`
         } 
         if (nerbyRoutes == null || nerbyRoutes.length < 1 ) {
-            return false
+            return `userLat = 60.17104039007619; userLon = 24.94132518768311; importRoutes = [];`
         }
-        return `userLat = `+location.coords.latitude+`; userLon = `+location.coords.longitude+`; importRoutes =`+ JSON.stringify(nerbyRoutes)
+        a = JSON.stringify(nerbyRoutes)
+        console.log(a)
+        console.log(JSON.parse(a))
+        return `userLat = `+location.coords.latitude+`; userLon = `+location.coords.longitude+`; importRoutes =`+ JSON.stringify(nerbyRoutes)+`; alert(userLat+' '+userLon+' '+importRoutes);`
     } catch (error) {
         console.log(error)
         return false
@@ -119,7 +121,8 @@ class MapScreen extends Component {
     render() {
         const { location, nerbyRoutes } = this.props;
         try {
-            setTimeout(() => {this.webref.injectJavaScript(validateLocation(location,nerbyRoutes));},1)
+            send = validateLocation(location,nerbyRoutes)
+            setTimeout(() => {this.webref.injectJavaScript(send._j);},1)
         } catch (error) {
             console.log(error)
         }
