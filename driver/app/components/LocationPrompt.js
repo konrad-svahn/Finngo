@@ -2,12 +2,11 @@ import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import { PermissionsAndroid } from "react-native"
 import { useSelector, useDispatch } from 'react-redux'
-import { setLocation } from "../redux/testSlice"
+import { setLocation,  getNerbyRoutes } from "../redux/testSlice"
 import Geolocation from 'react-native-geolocation-service';
 
 function LocationPrompt() {
     // https://blog.logrocket.com/react-native-geolocation-complete-tutorial/
-    const location = useSelector((state) => state.test.location)
     const dispatch = useDispatch()
         
     const requestLocationPermission = async () => {
@@ -41,8 +40,8 @@ function LocationPrompt() {
             if (res) {
             Geolocation.getCurrentPosition(
                 position => {
-                console.log(position);
-                dispatch(setLocation(position));
+                    dispatch(setLocation(position));
+                    dispatch(getNerbyRoutes(position))
                 },
                 error => {
                 // See error code charts below.
@@ -53,7 +52,6 @@ function LocationPrompt() {
             );
             }
         });
-        console.log(location);
     };
 
     useEffect(() => {

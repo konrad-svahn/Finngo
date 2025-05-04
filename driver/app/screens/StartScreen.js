@@ -1,6 +1,6 @@
-import React from "react"
+import React, { useEffect } from "react"
 import {ImageBackground, StyleSheet, Text, PermissionsAndroid, TouchableOpacity} from "react-native"
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { logout } from "../redux/testSlice"
 import LocationPrompt from "../components/LocationPrompt"
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -18,7 +18,6 @@ function StartScreen(props){
             >
                 <Text style={{color: "#ffffff", textAlign: "center", fontWeight: 700, fontSize: 16}}>logout</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.loginButon} onPress={() => { AsyncStorage.getItem("authKey").then(data => console.log(data))}} />
         </ImageBackground>
     );
 }

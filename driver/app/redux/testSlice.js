@@ -29,6 +29,18 @@ export const register = createAsyncThunk(
   }
 );
 
+export const getNerbyRoutes = createAsyncThunk(
+  "auth/getNerbyRoutes",
+  async ({ location }, { rejectWithValue }) => {
+    try {
+      const response = await api.getManyTours({location})
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
 export const testSlice = createSlice({
   name: 'test',
   initialState: {
@@ -38,7 +50,8 @@ export const testSlice = createSlice({
     lastname: null,
     is_loading: true,
     error: null,
-    location: null
+    location: null,
+    nerbyRoutes: null
   },
   reducers: {
     setLocation: (state, action) => { 
@@ -72,12 +85,10 @@ export const testSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.is_loading = false;
-        console.log(action.payload)
         AsyncStorage.setItem("authKey", action.payload.token)
         AsyncStorage.setItem("user",action.payload.result._id)
       })
       .addCase(login.rejected, (state, action) => {
-        console.log(action.payload)
         state.is_loading = false;
         state.error = action.payload.message;
       })
@@ -90,6 +101,17 @@ export const testSlice = createSlice({
         AsyncStorage.setItem("user",action.payload.result._id)
       })
       .addCase(register.rejected, (state, action) => {
+        state.is_loading = false;
+        state.error = action.payload.message;
+      })
+      .addCase(getNerbyRoutes.pending, (state, action) => {
+        state.is_loading = true;
+      })
+      .addCase(getNerbyRoutes.fulfilled, (state, action) => {
+        state.is_loading = false;
+        state.nerbyRoutes = action.payload
+      })
+      .addCase(getNerbyRoutes.rejected, (state, action) => {
         state.is_loading = false;
         state.error = action.payload.message;
       })

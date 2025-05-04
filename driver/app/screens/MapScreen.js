@@ -29,23 +29,19 @@ html = `
         <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
         <script>
             try {
-                if (basecost == undefined || costPerMetre == undefined) {
-                    basecost = 10
-                    costPerMetre = 0.002
-                }
-            } catch (error) {
-                basecost = 10
-                costPerMetre = 0.002
-            }
-            try {
-                if (userLat == undefined || userLon == undefined) {
+                if (userLat == undefined || userLon == undefined || importRoutes == undefined) {
                     userLat = 60.17104039007619
                     userLon =  24.94132518768311
+                    importRoutes = "[1]"
             }
-            } catch {
+            } catch (error) {
                 userLat = 60.17104039007619
                 userLon =  24.94132518768311
+                importRoutes = "[2]"
+                alert(error)
             }
+            importRoutes = JSON.parse(importRoutes)
+
             exportRoute = [[userLat, userLon]]
 
             L.Control.export = L.Control.extend({
@@ -68,7 +64,7 @@ html = `
                                 window.ReactNativeWebView.postMessage(JSON.stringify(finalRoute))
                             }//*/
                         } else {
-                            alert("a route must contain more than one point")
+                            alert(importRoutes[0])
                         }
                     });
                     return exportButton;
@@ -87,7 +83,7 @@ html = `
             userLocation = L.marker([userLat, userLon], {draggable:"true"}).addTo(map);
             userLocation._icon.classList.add("huechange")
 
-            requestARide = L.control.export({ position: "bottomright" }).addTo(map)
+            seeNerbyRequests = L.control.export({ position: "bottomright" }).addTo(map)
 
             userLocation.on("dragend", function(event){
                 marker = event.target;
@@ -98,54 +94,35 @@ html = `
                 exportRoute[0] = [position.lat, position.lng]
                 map.panTo(new L.LatLng(position.lat, position.lng))
             });//*/
-
-            map.on("click", function (event) {
-                L.marker([event.latlng.lat, event.latlng.lng]).addTo(map);
-            });
-
-            map.on("layeradd", async function(event) {
-                if (event.layer.options.alt == "Marker") {
-                    try {
-                        startLat = exportRoute[exportRoute.length-1][0]
-                        startLon = exportRoute[exportRoute.length-1][1]
-                        targetLat = event.layer._latlng.lat
-                        targetLon = event.layer._latlng.lng
-                        result = await fetch(
-                            "https://router.project-osrm.org/route/v1/driving/"+startLon+","+startLat+";"+targetLon+","+targetLat+"?geometries=geojson&alternatives=true&steps=true&generate_hints=false",
-                            { method: "GET" }
-                        ).then(
-                            (data)=>data.json()
-                        )
-                        console.log(result)
-                        routes.addData(result.routes[0].geometry)
-                        exportRoute.push([targetLat, targetLon])
-                    } catch (error) {
-                        console.log(error)
-                    }
-                }
-            })
         </script>
     </body>
 </html>
 `
 
-function validateLocation (location) {
+async function validateLocation (location, nerbyRoutes) {
     try {
         if (location == null || location == undefined || location.coords.latitude == undefined || location.coords.longitude == undefined) {
-            return `userLat = 60.17104039007619; userLon = 24.94132518768311;`
-        } else {
-            return `userLat = `+location.coords.latitude+`; userLon = `+location.coords.longitude+`;`
+            console.log("no location")
+            return false
+        } 
+        if (nerbyRoutes == null || nerbyRoutes.length < 1 ) {
+            return false
         }
+        return `userLat = `+location.coords.latitude+`; userLon = `+location.coords.longitude+`; importRoutes =`+ JSON.stringify(nerbyRoutes)
     } catch (error) {
         console.log(error)
-        return `userLat = 60.17104039007619; userLon = 24.94132518768311;`
+        return false
     }
 }
 
 class MapScreen extends Component {
     render() {
-        const { location } = this.props;
-        setTimeout(() => {this.webref.injectJavaScript(validateLocation(location));},1)
+        const { location, nerbyRoutes } = this.props;
+        try {
+            setTimeout(() => {this.webref.injectJavaScript(validateLocation(location,nerbyRoutes));},1)
+        } catch (error) {
+            console.log(error)
+        }
         return (
             <>
             <WebView
@@ -156,11 +133,6 @@ class MapScreen extends Component {
                 onMessage={ async function (event) {
                     json = JSON.parse(event.nativeEvent.data)
                     console.log(json)
-                    route = event.nativeEvent.data
-                    creator = await AsyncStorage.getItem("user")
-                    startlat = json.waypoints[0].location[1]
-                    startlon = json.waypoints[0].location[0]
-                    await api.createTour({route, creator, startlat, startlon}).then(data => console.log(data))
                 }}
             />
             </>
@@ -174,6 +146,6 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = (state) => ({ location: state.test.location })
+const mapStateToProps = (state) => ({ location: state.test.location, nerbyRoutes: state.test.nerbyRoutes})
 
 export default connect (mapStateToProps) (MapScreen);
